@@ -10,7 +10,12 @@ from api.serializers import (IngredientSerializer,
                              RecipeWriteSerializer,
                              TagSerializer)
 from api.utils import add_to, delete_from
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag, Amount
+from recipes.models import (Favorite,
+                            Ingredient,
+                            Recipe,
+                            ShoppingCart,
+                            Tag,
+                            Amount)
 from users.permissions import AuthorOrReadOnly
 from django.http.response import HttpResponse
 
