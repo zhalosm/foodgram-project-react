@@ -1,4 +1,4 @@
-from colorfield.fields import ColorField
+from .validators import validate_color_code
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -10,9 +10,10 @@ class Tag(models.Model):
         verbose_name='Название',
         max_length=200,
         unique=True)
-    color = ColorField(
+    color = models.CharField(
         verbose_name='Цвет',
         max_length=7,
+        validators=[validate_color_code],
         unique=True)
     slug = models.SlugField(
         verbose_name='Слаг',

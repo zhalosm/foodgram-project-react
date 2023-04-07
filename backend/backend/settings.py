@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 
@@ -6,10 +7,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-d*^3+&agwm%1(dsv$kz9icgv5xvm8q$e$(0ozr&x4jl-qr+0a+'
 
-
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', 'web']
+
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://web']
 
 
 INSTALLED_APPS = [
@@ -63,13 +66,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
+DATABASES = {
+   'default': {
+       'ENGINE': os.getenv('DB_ENGINE'),
+       'NAME': os.getenv('DB_NAME'),
+       'USER': os.getenv('POSTGRES_USER'),
+       'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+       'HOST': os.getenv('DB_HOST'),
+       'PORT': os.getenv('DB_PORT')
+   }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
