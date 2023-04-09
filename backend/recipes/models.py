@@ -1,9 +1,8 @@
-from .validators import (validate_color_code,
-                         validate_cooking_time,
-                         validate_amount
-                         )
 from django.contrib.auth import get_user_model
 from django.db import models
+
+from .validators import (validate_amount, validate_color_code,
+                         validate_cooking_time)
 
 User = get_user_model()
 
