@@ -10,18 +10,21 @@ User = get_user_model()
 
 
 class TagSerializer(serializers.ModelSerializer):
+    """Сериализатор для вывода тэгов."""
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор для вывода ингредиентов."""
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
 
 
 class AmountSerializer(serializers.ModelSerializer):
+    """Сериализатор для ингредиентов."""
     id = serializers.IntegerField(source='ingredient.id')
     name = serializers.CharField(source='ingredient.name')
     measurement_unit = serializers.CharField(
@@ -33,18 +36,24 @@ class AmountSerializer(serializers.ModelSerializer):
 
 
 class IngredientAmountSerializer(serializers.Serializer):
+    """Сериализатор для колиечества ингредиентов."""
     id = serializers.IntegerField(required=True)
     amount = serializers.IntegerField(required=True)
 
     def validate_amount(self, value):
         if value <= 0:
             raise serializers.ValidationError(
-                'Количесто ингредиента не может быть меньше отрицательным'
+                'Ингредиентов не может быть ноль.'
+            )
+        if value > 2147483647:
+            raise serializers.ValidationError(
+                'Недопустимое количество ингредиентов.'
             )
         return value
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор модели рецепта."""
     author = UsersSerializer(read_only=True)
     ingredients = AmountSerializer(many=True)
     tags = TagSerializer(many=True)
@@ -68,27 +77,31 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
+        """Проверяет находится ли рецепт в избранном."""
         request = self.context.get('request')
-        if request.user.is_anonymous:
-            return False
-        favorite = request.user.favorites.filter(recipe=obj)
-        return favorite.exists()
+        return (
+            request.user.is_authenticated
+            and request.user.favorites.filter(recipe=obj).exists()
+        )
 
     def get_is_in_shopping_cart(self, obj):
+        """Проверяет находится ли рецепт в в списке покупок."""
         request = self.context.get('request')
-        if request.user.is_anonymous:
-            return False
-        shopping_cart = request.user.cart.filter(recipe=obj)
-        return shopping_cart.exists()
+        return (
+            request.user.is_authenticated
+            and request.user.cart.filter(recipe=obj).exists()
+        )
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
+    """Сериализатор рецепта."""
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
+    """Сериализатор для изменения рецепта."""
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all()
     )
@@ -107,6 +120,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         )
 
     def add_ingredients(self, ingredients_list, recipe):
+        """Добавляет несколько ингредиентов."""
         Amount.objects.bulk_create([
             Amount(
                 recipe=recipe,
@@ -116,6 +130,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ])
 
     def create(self, validated_data):
+        """Создает новый рецепт."""
         request = self.context.get('request')
         author = request.user
         ingredients = validated_data.pop('ingredients')
@@ -126,6 +141,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
+        """Обновялет существующий рецепет."""
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         instance.tags.clear()
@@ -137,6 +153,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.Serializer):
+    """Сериализатор для избарнных рецептов."""
     def to_representation(self, instance):
         request = self.context.get('request')
         return RecipeShortSerializer(
@@ -146,6 +163,7 @@ class FavoriteSerializer(serializers.Serializer):
 
 
 class FollowListSerializer(serializers.ModelSerializer):
+    """Сериализатор для списка подписок."""
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
@@ -164,9 +182,11 @@ class FollowListSerializer(serializers.ModelSerializer):
         )
 
     def get_recipes_count(self, obj):
+        """Получение количества рецептов для конкретного автора."""
         return obj.recipes.count()
 
     def get_recipes(self, obj):
+        """Получение списка авторских рецептов."""
         request = self.context.get('request')
         recipes_limit = request.query_params.get('recipes_limit')
         if not recipes_limit:
@@ -182,15 +202,17 @@ class FollowListSerializer(serializers.ModelSerializer):
         ).data
 
     def get_is_subscribed(self, obj):
+        """Статус подписки текущего пользователя на конкретного автора."""
         request = self.context.get('request')
-        user = request.user
-        if not request or user.is_anonymous:
-            return False
-        subcribe = user.follower.filter(author=obj)
-        return subcribe.exists()
+        user = request.user if request else None
+        return (
+            user and not user.is_anonymous
+            and user.follower.filter(author=obj).exists()
+        )
 
 
 class FollowSerializer(serializers.ModelSerializer):
+    """Сериализатор для подписок."""
     class Meta:
         model = Follow
         fields = ('author', 'user')
@@ -203,6 +225,7 @@ class FollowSerializer(serializers.ModelSerializer):
         ).data
 
     def validate(self, data):
+        """Проверяет подписан ли пользователь на автора."""
         request = self.context.get('request')
         user = request.user
         author = data.get('author')

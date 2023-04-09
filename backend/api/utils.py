@@ -7,6 +7,7 @@ from recipes.models import Recipe
 
 
 def add_to(self, model, user, pk):
+    """Добавляет рецепт в избранное."""
     if model.objects.filter(user=user, recipe__id=pk).exists():
         return Response({'error': 'Уже существует'},
                         status=status.HTTP_400_BAD_REQUEST)
@@ -17,6 +18,7 @@ def add_to(self, model, user, pk):
 
 
 def delete_from(self, model, user, pk):
+    """Уудаляет рецепт из избранного."""
     if model.objects.filter(user=user, recipe__id=pk).exists():
         model.objects.filter(
             user=user, recipe__id=pk

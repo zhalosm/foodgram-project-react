@@ -5,6 +5,7 @@ from recipes.models import Ingredient, Recipe
 
 
 class RecipeFilter(rest_framework.FilterSet):
+    """Фильтр рецептов."""
     tags = django_filters.AllValuesMultipleFilter(
         field_name='tags__slug'
     )
@@ -20,12 +21,14 @@ class RecipeFilter(rest_framework.FilterSet):
         fields = ('is_favorited', 'author', 'tags', 'is_in_shopping_cart', )
 
     def get_is_favorited(self, queryset, name, value):
+        """Фильтрация избранных рецептов."""
         user = self.request.user
         if value:
             return queryset.filter(favorited__user_id=user.id)
         return queryset.all()
 
     def get_is_shopping_cart(self, queryset, name, value):
+        """Фильрация рецептов добавленных в корзину."""
         user = self.request.user
         if value:
             return queryset.filter(in_shopping_cart__user_id=user.id)
@@ -33,6 +36,7 @@ class RecipeFilter(rest_framework.FilterSet):
 
 
 class IngredientFilter(rest_framework.FilterSet):
+    """Фильтр ингредиентов."""
     name = django_filters.CharFilter(
         field_name='name',
         lookup_expr='istartswith'

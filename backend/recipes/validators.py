@@ -12,3 +12,17 @@ def validate_color_code(value):
         raise ValidationError(
             'Значение поля "color_code" должно быть в формате #RRGGBB'
             )
+
+
+def validate_cooking_time(value):
+    if value < 1:
+        raise ValidationError(
+            'Время приготовления должно быть не менее одной минуты'
+            )
+
+
+def validate_amount(value):
+    if value < 1:
+        raise ValidationError(
+            'Минимум один ингредиент'
+            )

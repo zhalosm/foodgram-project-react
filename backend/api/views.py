@@ -21,6 +21,7 @@ from django.http.response import HttpResponse
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """Viewset для тэгов."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
@@ -29,6 +30,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """Viewset для ингредиентов."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (DjangoFilterBackend,)
@@ -39,6 +41,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    """Viewset для рецептов."""
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     http_method_names = ('get', 'post', 'patch', 'delete')
@@ -48,6 +51,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (AuthorOrReadOnly,)
 
     def get_serializer_class(self):
+        """Возвращает соответствующий класс сериализатора."""
         if self.request.method in permissions.SAFE_METHODS:
             return RecipeSerializer
         return RecipeWriteSerializer
@@ -58,6 +62,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[permissions.IsAuthenticated]
     )
     def favorite(self, request, pk):
+        """Добавляет или удаляет рецепт из избранного."""
         if request.method == 'POST':
             return add_to(self, Favorite, request.user, pk)
         return delete_from(self, Favorite, request.user, pk)
@@ -68,15 +73,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[permissions.IsAuthenticated]
     )
     def shopping_cart(self, request, pk):
+        """Добавляет или удаляет рецепт из корзины пользователя."""
         if request.method == 'POST':
             return add_to(self, ShoppingCart, request.user, pk)
         return delete_from(self, ShoppingCart, request.user, pk)
 
 
 class DownloadCart(APIView):
+    """View для скачивания списка покупок"""
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        """Скачивает список покупок в формате .txt."""
         shopping_list = {}
         ingredients = Amount.objects.filter(
             recipe__in_shopping_cart__user=request.user

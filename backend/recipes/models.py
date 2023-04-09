@@ -1,4 +1,7 @@
-from .validators import validate_color_code
+from .validators import (validate_color_code,
+                         validate_cooking_time,
+                         validate_amount
+                         )
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -6,17 +9,18 @@ User = get_user_model()
 
 
 class Tag(models.Model):
+    """Модель тэга."""
     name = models.CharField(
-        verbose_name='Название',
+        'Название',
         max_length=200,
         unique=True)
     color = models.CharField(
-        verbose_name='Цвет',
+        'Цвет',
         max_length=7,
-        validators=[validate_color_code],
+        validators=(validate_color_code,),
         unique=True)
     slug = models.SlugField(
-        verbose_name='Слаг',
+        'Слаг',
         max_length=200,
         unique=True
     )
@@ -30,12 +34,13 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
+    """Модель ингредиента."""
     name = models.CharField(
-        verbose_name='Название',
+        'Название',
         max_length=200
     )
     measurement_unit = models.CharField(
-        verbose_name='Единица измерения',
+        'Единица измерения',
         max_length=200
     )
 
@@ -48,22 +53,23 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
+    """Модель рецпета."""
     name = models.CharField(
-        verbose_name='Название',
+        'Название',
         max_length=200,
         unique=True
     )
     text = models.TextField(
-        verbose_name='Описание'
+        'Описание'
     )
     image = models.ImageField(
-        verbose_name='Изображение',
+        'Изображение',
         upload_to='images/',
-        null=True,
         default=None
     )
     cooking_time = models.PositiveSmallIntegerField(
-        verbose_name='Время приготовления в минутах'
+        'Время приготовления в минутах',
+        validators=(validate_cooking_time,)
     )
     tags = models.ManyToManyField(
         Tag,
@@ -76,13 +82,13 @@ class Recipe(models.Model):
         related_name='recipes'
     )
     pub_date = models.DateTimeField(
-        verbose_name='Дата публикации',
+        'Дата публикации',
         auto_now_add=True
     )
     amount_ingredients = models.ManyToManyField(Ingredient, through='Amount')
 
     class Meta:
-        ordering = ['-pub_date']
+        ordering = ('-pub_date',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
@@ -91,8 +97,10 @@ class Recipe(models.Model):
 
 
 class Amount(models.Model):
-    amount = models.PositiveIntegerField(
-        verbose_name='Количество'
+    """Модель количества ингрединетов."""
+    amount = models.PositiveSmallIntegerField(
+        'Количество',
+        validators=(validate_amount,)
     )
     ingredient = models.ForeignKey(
         Ingredient,
@@ -123,6 +131,7 @@ class Amount(models.Model):
 
 
 class ShoppingCart(models.Model):
+    """Модель списка покупок."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -151,6 +160,7 @@ class ShoppingCart(models.Model):
 
 
 class Favorite(models.Model):
+    """Модель избранного."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

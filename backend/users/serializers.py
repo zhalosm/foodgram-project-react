@@ -7,6 +7,7 @@ User = get_user_model()
 
 
 class UsersSerializer(UserSerializer):
+    """Сериализтор пользователя."""
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -21,8 +22,10 @@ class UsersSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, obj):
+        """Проверка подписки."""
         request = self.context.get('request')
-        if not request.user or request.user.is_anonymous:
-            return False
-        subcribe = request.user.follower.filter(author=obj)
-        return subcribe.exists()
+        user = request.user if request else None
+        return (
+            user and not user.is_anonymous
+            and user.follower.filter(author=obj).exists()
+        )

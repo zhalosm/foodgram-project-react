@@ -14,6 +14,7 @@ User = get_user_model()
 
 
 class UsersViewSet(UserViewSet):
+    """Viewset пользователя."""
     pagination_class = CustomPagination
     serializer_class = UsersSerializer
 
@@ -23,6 +24,10 @@ class UsersViewSet(UserViewSet):
         permission_classes=[permissions.IsAuthenticated]
     )
     def subscriptions(self, request):
+        """
+        Возвращает список пользователей, на которых подписан
+        прошедший проверку подлинности пользователь.
+        """
         user = self.request.user
         queryset = User.objects.filter(following__user=user)
         if queryset:
@@ -43,7 +48,9 @@ class UsersViewSet(UserViewSet):
         permission_classes=[permissions.IsAuthenticated]
     )
     def subscribe(self, request, id):
-
+        """Позволяет аутентифицированному пользователю
+        подписываться или отписаться от конкретного пользователя.
+        """
         user = request.user
         author = get_object_or_404(User, id=id)
         if request.method == 'POST':
