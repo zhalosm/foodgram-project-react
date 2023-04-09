@@ -9,6 +9,7 @@ services:
       - ./.env
 
   web:
+    image: zhalosm/foodgram:latest
     build: ../backend
     restart: always
     volumes:
@@ -20,6 +21,7 @@ services:
       - ./.env
 
   frontend:
+    image: zhalosm/foodgram:latest
     build: ../frontend
     volumes:
       - ../frontend/:/app/result_build/
