@@ -17,12 +17,12 @@ class User(AbstractUser):
         constraints = [models.UniqueConstraint(
             fields=['username'],
             name='unique_username'
-            ),
+        ),
             models.UniqueConstraint(
             fields=['email'],
             name='unique_email'
-            )
-            ]
+        )
+        ]
 
     def __str__(self):
         return f'{self.username}'
@@ -57,7 +57,7 @@ class Follow(models.Model):
         if self.user == self.author:
             raise ValidationError(
                 'Пользователь не может подписаться на самого себя'
-                )
+            )
 
     def __str__(self):
         return f"{self.user} подписан на {self.author}"
