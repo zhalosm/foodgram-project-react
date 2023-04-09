@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    """Модель тэга."""
+    """Модель тэdга."""
     name = models.CharField(
         'Название',
         max_length=200,
