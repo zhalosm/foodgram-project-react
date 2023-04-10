@@ -21,7 +21,10 @@ services:
       - ./.env
 
   frontend:
-    build: ../frontend
+    container_name: frontend
+    build:
+        context: ./frontend
+        dockerfile: dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
