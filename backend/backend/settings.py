@@ -11,7 +11,7 @@ DEBUG = False
 ALLOWED_HOSTS = ['localhost', 'web', '158.160.0.75']
 
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://web', '158.160.0.75']
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://web', 'http://158.160.0.75']
 
 
 INSTALLED_APPS = [
