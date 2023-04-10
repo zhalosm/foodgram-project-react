@@ -7,10 +7,9 @@ services:
       - /var/lib/postgresql/data/
     env_file:
       - ./.env
-
+  
   web:
     image: zhalosm/foodgram:latest
-    build: ../backend
     restart: always
     volumes:
       - static_value:/app/static/
@@ -21,10 +20,7 @@ services:
       - ./.env
 
   frontend:
-    container_name: frontend
-    build:
-        context: ./frontend
-        dockerfile: dockerfile
+    image: zhalosm/foodgram:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
