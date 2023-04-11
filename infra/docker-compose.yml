@@ -9,7 +9,7 @@ services:
       - ./.env
   
   web:
-    build: ../backend
+    image: zhalosm/foodgram:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -20,12 +20,11 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    build: ../frontend
     volumes:
       - ../frontend/:/app/result_build/
-
+    depends_on:
+      - web
 
   nginx:
     image: nginx:1.21.3-alpine
@@ -38,6 +37,7 @@ services:
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     depends_on:
+      - frontend
       - web
 
 volumes:
