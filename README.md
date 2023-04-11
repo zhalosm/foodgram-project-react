@@ -1,4 +1,8 @@
+# Продуктовый помощник - Foodgram
 
+На этом сервисе пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, 
+добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, 
+необходимых для приготовления одного или нескольких выбранных блюд.
 
 Сайт доступен по адресу http://158.160.0.75/
 
@@ -9,7 +13,7 @@
 - автоматический деплой проекта на боевой сервер
 - отправка уведомления в Telegram о том, что процесс деплоя успешно завершился
 
-### ![example workflow](https://github.com/zhalosm/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
+### ![example workflow](https://github.com/zhalosm/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
 # Стэк технологий
 
@@ -144,4 +148,6 @@ sudo docker-compose exec web python manage.py createsuperuser
 ```
 sudo docker-compose exec web python manage.py collectstatic --no-input
 ```
- 
+Автор проекта:
+
+Петров Константин
