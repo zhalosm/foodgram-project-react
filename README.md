@@ -148,6 +148,7 @@ sudo docker-compose exec web python manage.py createsuperuser
 ```
 sudo docker-compose exec web python manage.py collectstatic --no-input
 ```
-Автор проекта:
 
-Петров Константин
+### Автор проекта:
+
+### Петров Константин
