@@ -84,7 +84,9 @@ class Recipe(models.Model):
         'Дата публикации',
         auto_now_add=True
     )
-    amount_ingredients = models.ManyToManyField(Ingredient, through='Amount')
+    amount_ingredients = models.ManyToManyField(
+        Ingredient,
+        through='Amount')
 
     class Meta:
         ordering = ('-pub_date',)

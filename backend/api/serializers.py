@@ -36,14 +36,14 @@ class AmountSerializer(serializers.ModelSerializer):
 
 
 class IngredientAmountSerializer(serializers.Serializer):
-    """Сериализатор для колиечества ингредиентов."""
+    """Сериализатор для количества ингредиентов."""
     id = serializers.IntegerField(required=True)
     amount = serializers.IntegerField(required=True)
 
     def validate_amount(self, value):
         if value <= 0:
             raise serializers.ValidationError(
-                'Ингредиентов не может быть ноль.'
+                'Недопустимое количество ингредиентов.'
             )
         if value > 2147483647:
             raise serializers.ValidationError(
@@ -118,6 +118,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time'
         )
+
+    def validate_add_ingredients(self, data):
+        """Проверяет повторяются ли ингредиенты."""
+        ingredients = data.get('ingredients')
+        if len(ingredients) != len(set([item['id'] for item in ingredients])):
+            raise serializers.ValidationError(
+                'Ингредиенты не должны повторяться!')
 
     def add_ingredients(self, ingredients_list, recipe):
         """Добавляет несколько ингредиентов."""
