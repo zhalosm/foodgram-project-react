@@ -5,7 +5,6 @@ from rest_framework import serializers
 from users.models import Follow
 from users.serializers import UsersSerializer
 
-
 User = get_user_model()
 
 
