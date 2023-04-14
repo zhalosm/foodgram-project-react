@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
+from drf_base64.fields import Base64ImageField
 from recipes.models import Amount, Ingredient, Recipe, Tag
 from rest_framework import serializers
 from users.models import Follow
 from users.serializers import UsersSerializer
 
-from .fields import Base64ImageField
 
 User = get_user_model()
 
@@ -119,12 +119,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'cooking_time'
         )
 
-    def validate_add_ingredients(self, data):
+    def validate(self, data):
         """Проверяет повторяются ли ингредиенты."""
         ingredients = data.get('ingredients')
         if len(ingredients) != len(set([item['id'] for item in ingredients])):
             raise serializers.ValidationError(
                 'Ингредиенты не должны повторяться!')
+        return data
 
     def add_ingredients(self, ingredients_list, recipe):
         """Добавляет несколько ингредиентов."""
