@@ -24,6 +24,12 @@ class Tag(models.Model):
         unique=True
     )
 
+    def clean(self):
+        super().clean()
+        # Приводим значение поля color к маленькому регистру
+        if self.color:
+            self.color = self.color.lower()
+
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
